@@ -1,0 +1,172 @@
+
+
+<div id="source_main"></div>
+<div id="updateSources_window" class="easyui-window" data-options="title:'修改资源',modal:true,closed:true" style="width:500px;height:500px;display: flex;justify-content: center;align-items: center">
+    <div id="updateSources_div" class="form-group">
+        <div style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center">
+            <table>
+                <form id="updateSources_form" action="/updateResource" method="post">
+                    <div id="meg-update" ></div>
+                    <input name="id" type="hidden">
+
+                    <tr >
+                        <div class="input-group" style="margin-bottom: 10px">
+                            <th><span  style="height: 30px">资源名称</span></th>
+                            <th><input type="text" name="text" /></th>
+                        </div>
+                    </tr>
+                    <tr>
+                        <div class="input-group" style="margin-bottom: 10px">
+                            <th><span style="height: 30px">URL</span></th>
+                            <th><input type="text" name="url"/> </th>
+                        </div>
+                    </tr>
+                    <tr>
+                        <div class="input-group" style="margin-bottom: 10px">
+                            <th><span style="height: 30px">父节点</span></th>
+                            <th><select id="parent" name="parentId" style="width: 100px"></select> </th>
+                        </div>
+                    </tr>
+
+                </form>
+                <tr>
+                    <div class="input-group" style="margin-bottom: 10px">
+                        <th><button type="reset" class="btn btn-success btn-block" style="margin-bottom: 10px">返回</button></th>
+
+                        <th> <button onclick="Update_Resources()" class="btn btn-success btn-block" style="margin-bottom: 10px">确定</button> </th>
+                    </div>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div id="addSources_window" class="easyui-window" data-options="title:'添加资源',modal:true,closed:true" style="width:500px;height:500px;display: flex;justify-content: center;align-items: center">
+    <div id="addSources_div" >
+        <div style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center">
+            <table>
+                <form id="addSources_form" action="/addResource" method="post" class="form-group">
+                    <div id="meg-add" ></div>
+
+                    <tr >
+                        <div class="input-group" style="margin-bottom: 10px">
+                            <th><span style="height: 30px">资源名称</span></th>
+                            <th><input type="text" name="text" /></th>
+                        </div>
+                    </tr>
+                    <tr>
+                        <div class="input-group" style="margin-bottom: 10px">
+                            <th><span style="height: 30px;">URL</span></th>
+                            <th><input type="text" name="url"/> </th>
+                        </div>
+                    </tr>
+                    <tr>
+                        <div class="input-group" style="margin-bottom: 10px">
+                            <th><span style="height: 30px">父节点</span></th>
+                            <th><select id="parentAdd" name="parentId" style="width: 100px"></select> </th>
+                        </div>
+                    </tr>
+
+                </form>
+                <tr>
+                    <div class="input-group" style="margin-bottom: 10px">
+                        <th><button type="reset" class="btn btn-success btn-block" style="margin-bottom: 10px">返回</button></th>
+
+                        <th> <button onclick="addSources()" class="btn btn-success btn-block" style="margin-bottom: 10px">确定</button> </th>
+                    </div>
+                </tr>
+            </table>
+            <div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+    <script>
+        function init_source() {
+            $("#source_main").treegrid({
+                idField:"id",
+                method:"get",
+                treeField:"text",
+                url:"/findAllResource",
+                columns:[[
+                    {field:"id",title:"ID",checkbox:true},
+                    {field:"text",title:"NAME",width:100},
+                    {field:"parentId",title:"parentId",width:100},
+                    {field:"url",title:"URL",width:100}
+                ]],
+                toolbar:[
+                    {text:"添加",iconCls:"icon-add",handler:function () {
+                            $("#addSources_window").window("open");
+                            allParentAdd();
+                        }},
+                    {text:"修改",iconCls:"icon-edit",handler:function () {
+
+                            toUpdate_Resources();
+                        }},
+                    {text:"删除",iconCls:"icon-remove",handler:function(){removeMany();}}
+                ]
+
+                }
+            )
+        }
+        $(init_source)
+
+        function allParentUpdate() {
+            $("#parent").combobox({
+                url:"/allParentPath",
+                valueField:"id",
+                textField:"text",
+                method:"get"
+
+            })
+        }
+        function allParentAdd() {
+            $("#parentAdd").combobox({
+                url:"/allParentPath",
+                valueField:"id",
+                textField:"text",
+                method:"get"
+            })
+        }
+        function toUpdate_Resources(){
+            var data =  $("#source_main").datagrid("getSelected");
+            if (data) {
+                var data_a = {id:data.id,text:data.text,url:data.url,parentId:data.parentId};
+                    alert(data_a.id);
+                    alert(data_a);
+
+                $("#updateSources_window").window("open");
+                $("#updateSources_form").form("load",data);
+                allParentUpdate();
+
+            }else{
+                $.messager.alert("系统消息","必须选择要修改的数据")
+            }
+
+        }
+        function Update_Resources() {
+            $("#updateSources_form").form("submit",{success:function (d) {
+                    $("#updateSources_window").window("close");
+                    $("#source_main").datagrid("reload");
+                }})
+        }
+
+        function addSources() {
+            $("#addSources_form").form("submit",{success:function (d) {
+                    $("#addSources_window").window("close");
+                    $("#source_main").datagrid("reload");
+                    $(init_source)
+                }
+            })
+
+        }
+        function reset() {
+            $("#updateUser_window").window("close");
+        }
+    </script>
+

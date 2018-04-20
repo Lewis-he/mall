@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/bootstrap.css"/>
+    <script src="/js/jquery.js"></script>
+    <script>
+        function login() {
+            var name =  $("#name").val();
+            var pwd = $("#pwd").val();
+
+            if (name==""||pwd==""){
+                $("#meg .meg").html("不能为空")
+                return;
+            }
+            $.get("/login/"+name+"/"+pwd,function (d) {
+                // if (d==1){
+                //     location.href="html/main.html"
+                // }else {
+                //     $("#meg .meg").html("登陆失败，请重新登陆")
+                // }
+            })
+        }
+    </script>
+    <style type="text/css">
+
+        #main_images {
+
+            background-color:#BEBEBE;
+            /*background-image: url("");*/
+            background-repeat: no-repeat;
+            background-attachment: local;
+
+            background-position: center;
+        }
+        /*body{*/
+            /**/
+            /*overflow: auto;*/
+
+            /*background-image: url("images/imgs/星空1.jpg");*/
+           /**/
+            /*background-repeat: no-repeat;*/
+            /*background-position: center;*/
+
+        /*}*/
+
+    </style>
+</head>
+<body>
+<div id="main_images" style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center" >
+    <!--<img src="images/imgs/星空1.jpg"/>-->
+    <form class="form-group" action="/login/" method="post">
+    <div id="login" class="form-group" >
+        <div id="meg"><span class="meg" style="color: red;font-size: 10px;font-family: 华文楷体"></span></div>
+        <div class="input-group" style="margin-bottom: 30px">
+            <span class="input-group-addon" >账号</span>
+            <input type="text" name="name" class="form-control"/>
+        </div>
+        <div class="input-group" style="margin-bottom: 30px">
+            <span class="input-group-addon">密码</span>
+            <input type="password" name="pwd" class="form-control"/>
+        </div>
+        <div>
+            <button class="btn btn-success btn-block">登陆</button>
+        </div>
+    </div>
+    </form>
+</div>
+</body>
+</html>

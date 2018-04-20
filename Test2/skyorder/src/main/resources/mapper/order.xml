@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hxh.skyorder.dao.OrderDao">
+
+    <insert id="saveOrder" parameterType="map">
+        INSERT INTO mall_order
+        VALUES(#{out_trade_no},#{total_amount},now(),'aa',1,1)
+    </insert>
+
+    <insert id="saveOrderDetail" parameterType="map">
+        INSERT INTO mall_order_detail VALUES
+        <foreach collection="detail" item="coom" separator=",">
+            (null,#{coom.sku},#{out_trade_no},#{coom.buy_num})
+        </foreach>
+    </insert>
+</mapper>

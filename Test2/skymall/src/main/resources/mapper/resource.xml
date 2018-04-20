@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hxh.skymall.dao.ResourceDao">
+    <!--<select id=""-->
+    <resultMap id="t2" type="com.hxh.skymall.entity.Resource">
+        <result property="text" column="t_name"/>
+        <result property="id" column="t_id"/>
+        <result property="parentId" column="t_pid"/>
+        <collection property="children" ofType="com.hxh.skymall.entity.Resource">
+            <result property="text" column="tc_name"/>
+            <result property="id" column="tc_id"/>
+            <result property="url" column="url"/>
+            <result property="parentId" column="tc_pid"/>
+        </collection>
+    </resultMap>
+    <select id="findAllResource" resultMap="t2">
+        SELECT
+        t.parentid as t_pid,
+        t.id    as t_id,
+        t.text  as t_name,
+        tc.parentid as tc_pid,
+        tc.id   as tc_id,
+        tc.text as tc_name,
+        tc.url
+        from java01.resources t
+        left join java01.resources tc
+        on t.id=tc.parentid
+        WHERE t.parentid=0
+    </select>
+
+    <insert id="addResource">
+        INSERT into resources VALUES (null,#{text},#{parentId},#{url})
+    </insert>
+
+    <update id="updateResource">
+        UPDATE resources set text=#{text},parentid=#{parentId},url=#{url} WHERE id=#{id}
+    </update>
+    <select id="userPrivileges" resultType="com.hxh.skymall.entity.Resource" parameterType="com.hxh.skymall.entity.User">
+        SELECT
+        t.parentid,
+        t.id,
+        t.text,
+        t.url
+        from resources t
+        LEFT JOIN r_t rt on t.id=rt.tid
+        LEFT JOIN user_role ur ON rt.rid=ur.rid
+        LEFT JOIN user u ON  ur.uid=u.id
+        WHERE u.id=#{id}
+    </select>
+
+    <select id="allParentPath" resultType="com.hxh.skymall.entity.Resource">
+        select id,text from resources
+    </select>
+</mapper>

@@ -1,0 +1,61 @@
+<div id="role_main"></div>
+<div id="role_window" class="easyui-window" style="width: 500px;height: 500px;" data-options="closed:true">
+    <ul id="role_qx_tree" class="easyui-tree" data-options="url:'/findAllResource',method:'get',checkbox:true"  ></ul>
+    <button class="btn btn-success btn-block" onclick="role_save()">保存</button>
+</div>
+
+    <script>
+        function roleAll() {
+            $("#role_main").datagrid({
+                columns:[[
+                    {field:"id",title:"id",checkbox:true},
+                    {field:"name",title:"名称",width:100}
+                ]],
+                toolbar:[
+                    {text:"权限设置",iconCls:"icon-search",handler:function () {
+                            openQX();
+                        }}
+                ]
+            });
+            fill_role();
+
+        }
+
+
+        function fill_role() {
+            $.getJSON("/allRole",function (data) {
+
+                $("#role_main").datagrid("loadData",data)
+            })
+        }
+        $(roleAll);
+
+        function openQX() {
+            $("#role_window").window("open");
+        }
+
+        function role_save() {
+
+            var role = $("#role_main").datagrid("getSelected");
+
+            var data = $("#role_qx_tree").tree("getChecked");
+
+            var roleids=[role.id];
+
+
+            for (var i=0;i<data.length;i++){
+                roleids[i+1] = data[i].id;
+                alert(data[i].text)
+
+            }
+
+            $.get("/add/" +roleids,function (d) {
+                $("#role_window").window("close");
+
+            })
+        }
+    </script>
+
+
+
+

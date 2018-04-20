@@ -1,0 +1,114 @@
+
+
+
+<div id="commodity_list"></div>
+<div id="add_comm_window" class="easyui-window" data-options="closed:true" style="width: 70%;height: 500px ">
+
+
+    <form id="commodity_add_from" class="form-group">
+        <table>
+            <tr>
+                <th>
+                    <div class="input-group" style="margin-bottom: 10px">
+                    <span class="input-group-addon">名称</span>
+                    <input name="name" class="easyui-textbox"/>
+                    </div>
+                </th>
+                <th>
+
+                    <div class="input-group" style="margin-bottom: 10px">
+                        <span class="input-group-addon">价格</span>
+                        <input name="price" class="easyui-textbox"/>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+
+                <th>
+                    <div class="input-group" style="margin-bottom: 10px">
+                        <span class="input-group-addon">类别</span>
+                        <input name="category" class="easyui-combotree"
+                               data-options="url:'/category/findAllCategory2',method:'get'"/>
+                    </div>
+
+                </th>
+                <th>
+                    <div class="input-group" style="margin-bottom: 10px">
+                        <span class="input-group-addon">图片</span>
+                        <input name="file" class="easyui-filebox"/>
+                    </div>
+                </th>
+            </tr>
+        </table>
+
+    </form>
+
+    <textarea name="description" rows="3" style="width: 90%;height: 50%"></textarea>
+
+    <button onclick="addCommodity()">保存</button>
+</div>
+<script>
+
+    function commodity_init() {
+        // $("#")
+        $("#commodity_list").datagrid({
+            title:"商品管理",
+            url:"/commodity/findAllCommodity",
+            method:"get",
+            columns:[[
+                {field:"id",checkbox:true},
+                {field:"name",title:"名称",width:100},
+                {field:"price",title:"价格",width:100},
+                {field:"category",title:"类别",width:100},
+                {field:"amount",title:"数量",width:100}
+
+            ]],
+            toolbar:[
+
+                {text:"添加",iconCls:"icon-add",handler:function () {
+                        $("#add_comm_window").window("open");
+                    }},
+                {text:"上架",iconCls:"icon-add",handler:function () {
+                        createHTML();
+                    }},
+            ]
+        })
+
+
+        CKEDITOR.replace("description");
+    }
+
+    $(commodity_init)
+
+    function createHTML() {
+        var data = $("#commodity_list").datagrid("getSelected");
+
+        $.get("commodity/createHTML/"+data.sku,{success:function (re) {
+                if (re == 1){
+                    $.messager.alert("上架成功")
+                }else {
+                    $.messager.alert("上架失败")
+                }
+            }})
+    }
+    function addCommodity() {
+
+        var data = new FormData(document.getElementById("commodity_add_from"));
+
+        var desc = CKEDITOR.instances.description.getData();
+        data.append("description",desc);
+
+        $.ajax({
+            url:"commodity/addCommodity",
+            method:"post",
+            data:data,
+            contentType:false,
+            processData:false,
+            success:function (rs) {
+                alert(rs);
+            }
+
+        });
+
+    }
+</script>

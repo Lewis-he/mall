@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/icon.css">
+    <link rel="stylesheet" href="css/easyui.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/easyui.js"></script>
+    <script>
+        function init_category() {
+            $("#category_list").treegrid({
+                idField:"id",
+                method:"get",
+                treeField:"text",
+                title:"资源管理",
+                url:"/category/findAllCategory2",
+                columns:[[
+                    {field:"id",checkbox:true},
+                    {field:"text",title:"名称",width:200},
+                    {field:"parentId",title:"上级ID",width:100},
+
+                ]],
+                toolbar:[
+
+                    {text:"添加",iconCls:"icon-add",handler:function () {
+                            $("#add_window").window("open");
+                        }},
+                ]
+
+            })
+        }
+
+        $(init_category)
+        function addCategory() {
+            var data = $("#category_list").treegrid("getSelected");
+
+            if (data){
+
+                $("#parentId_c").val(data.id);
+                alert(data.id);
+                addForm();
+            }else {
+                $("#parentId_c").val("0");
+                addForm();
+            }
+
+        }
+        
+        function addForm() {
+            $("#add_form").form("submit",{success:function (data) {
+                alert("success")
+                $("#add_window").window("close")
+
+            }})
+        }
+    </script>
+</head>
+<body>
+<div id="category_list"></div>
+
+<div id="add_window" class="easyui-window" data-options="title:'添加商品类别',modal:true,closed:true" style="width:400px;height:400px;display: flex;justify-content: center;align-items: center">
+    <form id="add_form" action="/category/addCategory" method="post">
+        <div>
+
+            名称：<input type="text" name="name" /><br/>
+            <input type="hidden" id="parentId_c" name="parentId" />
+
+        </div>
+    </form>
+    <br/>
+    <div>
+        <button onclick="addCategory()">确定</button>
+    </div>
+
+</div>
+</body>
+</html>

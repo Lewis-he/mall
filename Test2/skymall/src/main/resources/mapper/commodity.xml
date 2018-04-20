@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hxh.skymall.dao.CommodityDao">
+
+    <select id="findAllCommodity" resultType="com.hxh.skymall.entity.Commodity">
+        SELECT * FROM mall_commodity
+    </select>
+
+    <insert id="addCommodityInfo" >
+        INSERT INTO mall_commodity(sku, name, description, price, amount, update_time, category)
+        values(#{sku},#{name},#{description},#{price},#{amount},now(),#{category})
+    </insert>
+
+    <insert id="addCommodityImg">
+        INSERT INTO mall_commodity_imgs(id, pathName, owner_id)
+        VALUES (#{imgId},#{imgName},#{sku})
+    </insert>
+    <select id="findCommodityBySku" resultType="com.hxh.skymall.entity.Commodity">
+        SELECT * from mall_commodity where sku=#{sku}
+    </select>
+</mapper>

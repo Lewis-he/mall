@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hxh.skymall.dao.UserDao">
+
+    <select id="findUserByName" resultType="com.hxh.skymall.entity.User">
+        select * from user WHERE password=#{pwd} and name=#{name}
+    </select>
+
+    <select id="readTotal" resultType="int">
+        SELECT count(id) FROM user
+    </select>
+    <resultMap id="allUser" type="com.hxh.skymall.entity.User">
+        <result property="id" column="u_id"/>
+        <result property="name" column="u_name"/>
+        <result property="roleName" column="r_name"/>
+
+    </resultMap>
+    <select id="findAllUser" resultType="com.hxh.skymall.entity.User">
+        select * from user
+    </select>
+    <resultMap id="x1" type="com.hxh.skymall.entity.User">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="roleName" column="r_name"/>
+    </resultMap>
+
+    <select id="findUserAndRole" resultType="com.hxh.skymall.entity.User">
+        select
+        u.name,
+        r.name AS roleName,
+        u.id
+        from user u
+        LEFT JOIN u_r ur
+        ON u.id=ur.uid
+        LEFT JOIN role r
+        ON r.id=ur.rid
+    </select>
+
+
+    <select id="searchUserByKey" resultType="com.hxh.skymall.entity.User">
+
+        SELECT * FROM user u
+        <if test="key!=null">
+            <if test="type=='account'">
+                WHERE u.name LIKE #{key}
+            </if>
+            <if test="type=='role'">
+                LEFT JOIN user_role ur
+                ON u.id=ur.uid
+                LEFT JOIN role r
+                ON r.id=ur.rid
+                WHERE r.name like #{key}
+            </if>
+        </if>
+
+    </select>
+
+    <delete id="removeMany" parameterType="list">
+        delete from user WHERE id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="fenye" resultType="com.hxh.skymall.entity.User" >
+        SELECT
+        u.id,
+        u.name,
+        u.password,
+        r.name as roleName
+        FROM user u
+        LEFT JOIN user_role ur ON u.id=ur.uid
+        LEFT JOIN role r on ur.rid=r.id
+        limit #{start},#{size}
+    </select>
+
+    <insert id="addUser">
+        INSERT into user values(null,#{name},#{password})
+    </insert>
+    <update id="updateUser" >
+        update user SET password =#{password},name=#{name} where id=#{id}
+    </update>
+
+    <select id="findUserByUsername" resultType="com.hxh.skymall.entity.User">
+        SELECT * FROM user where name=#{name}
+    </select>
+</mapper>

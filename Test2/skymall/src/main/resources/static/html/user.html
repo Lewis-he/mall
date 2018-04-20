@@ -1,0 +1,294 @@
+
+<div id="userlist"></div>
+
+<div id="addUser_window" class="easyui-window" data-options="title:'添加用户',modal:true,closed:true" style="width:400px;height:400px;display: flex;justify-content: center;align-items: center">
+    <div style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center">
+
+            <form id="addUser_form" class="form-group">
+                    <div class="input-group" style="margin-bottom: 10px">
+                       <span class="input-group-addon" style="height: 30px">用&nbsp户&nbsp名</span></th>
+                        <input type="text" name="name" />
+                    </div>
+
+
+
+                <div class="input-group" style="margin-bottom: 10px">
+                <span class="input-group-addon" style="height: 30px">密&nbsp&nbsp&nbsp&nbsp码</span>
+                <input id="pwd_first_" type="password" name="pwd"/>
+                </div>
+
+
+                    <div class="input-group" style="margin-bottom: 10px">
+                        <span class="input-group-addon" style="height: 30px">确认密码</span>
+                        <input id="pwd_last_" type="password" name="password" oninput="check_pwd_()"/>
+
+                    </div>
+
+                <div class="input-group" id="pwd_meg_"></div>
+
+                    <div class="input-group" style="margin-bottom: 10px">
+                         <span class="input-group-addon" style="height: 30px">角&nbsp&nbsp&nbsp&nbsp色</span>
+                       <input class="easyui-combobox"
+                                   name="roleName"
+                                   data-options="
+					url:'/allRole',
+					method:'get',
+					valueField:'id',
+					textField:'name',
+					multiple:true,
+					panelHeight:'auto'
+			"/>
+                    </div>
+            </form>
+
+            <div style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center">
+                <button onclick="reset_addUser()" class="btn btn-success btn-block" style="margin-bottom: 10px">返回</button>
+
+                <button onclick="save_user()" class="btn btn-success btn-block" style="margin-bottom: 10px">确定</button>
+            </div>
+
+
+    </div>
+</div>
+
+
+<div id="updateUser_window" class="easyui-window" data-options="title:'修改用户',modal:true,closed:true" style="width:500px;height:500px;display: flex;justify-content: center;align-items: center">
+    <div id="updateUser_div">
+        <div style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center">
+
+         <form id="updateUser_form" action="/user/updateUser" method="post" class="form-group">
+        <div id="meg-update" ></div>
+            <input name="id" type="hidden">
+
+                <div class="input-group" style="margin-bottom: 10px">
+                    <th><span class="input-group-addon" style="height: 30px">用&nbsp户&nbsp名</span>
+               <input type="text" name="name" />
+                </div>
+
+                <div class="input-group" style="margin-bottom: 10px">
+                <span class="input-group-addon" style="height: 30px">密&nbsp&nbsp&nbsp&nbsp码</span>
+                <input id="pwd_first" type="password" name="pwd"/>
+                </div>
+
+
+                <div class="input-group" style="margin-bottom: 10px">
+                   <span class="input-group-addon" style="height: 30px">确认密码</span>
+                   <input id="pwd_last" type="password" name="password" oninput="check_pwd()"/>
+
+                </div>
+
+
+                 <div class="input-group" style="margin-bottom: 10px">
+                  <div id="pwd_meg"></div>
+
+                 </div>
+
+
+
+                <div class="input-group" style="margin-bottom: 10px">
+                     <span class="input-group-addon" style="height: 30px">角&nbsp&nbsp&nbsp&nbsp色</span>
+                    <input class="easyui-combobox"
+                           name="roleName"
+                           data-options="
+					url:'/allRole',
+					method:'get',
+					valueField:'id',
+					textField:'name',
+					multiple:true,
+					panelHeight:'auto'
+			"/>
+                </div>
+
+        </form>
+
+                <div class="input-group" style="margin-bottom: 10px">
+                 <button onclick="reset_updateUser()" class="btn btn-success btn-block" style="margin-bottom: 10px">返回</button>
+
+                    <button onclick="Update_user()" class="btn btn-success btn-block" style="margin-bottom: 10px">确定</button>
+
+
+       </table>
+    <div>
+
+    </div>
+ </div>
+</div>
+
+    </div>
+</div>
+
+<script>
+        var totalSize=0;
+        function readTotal_user() {
+            $.get("/user/readTotal",function (size) {
+
+                totalSize=eval(size);
+            });
+        }
+        readTotal_user();
+        function init_user() {
+            $("#userlist").datagrid({
+                pagination:true,//分页组件
+                columns:[[
+                    {field:"id",title:"id",checkbox:true},
+                    {field:"name",title:"账号",width:100},
+                    {field:"roleName",title:"角色",width:100},
+                    {field:"password",hidden:true}
+                ]],
+                toolbar:[
+                    {text:"添加",iconCls:"icon-add",handler:function () {
+                        $("#addUser_form").form("clear");
+                            $("#addUser_window").window("open");
+                        }},
+                    {text:"修改",iconCls:"icon-edit",handler:function () {
+
+                            toupdate_user();
+                        }},
+                    {text:"删除",iconCls:"icon-remove",handler:function(){removeMany_user();}}
+                ]
+            });
+            fillData_user(1,10);
+        }
+        $(init_user);
+
+
+        function findRole() {
+
+        }
+
+        function fillData_user(page,size) {
+            //异步发送请求到controler的fenye()方法，该方法返回数据给data;
+            //自动发返回的string转为json对象
+            $.get("/user/fenye/"+page+"/"+size,function (data) {
+                //将返回的数据填充进列表
+                $("#userlist").datagrid("loadData",data);
+                //获取分页组件
+                var pager=$("#userlist").datagrid("getPager");
+                //设置分页参数
+                pager.pagination({
+                    total:totalSize,  //总条数
+                    pageList:[1,2,5,10],//尺寸范围
+                    pageSize:size,    //每页显示的条数
+                    pageNumber:page,  //当前页
+                    onSelectPage:function (page,size) {
+                        //翻页调用的函数
+                        fillData(page,size);
+                    }
+                });
+            });
+        }
+
+        function toupdate_user() {
+
+            // var model = { 'key1':value1,'key2',value2,'key3'...};
+            // $('#Form').form('load',model);
+
+            var data=$("#userlist").datagrid("getSelected");
+            alert(data.password);
+            if(data) {
+                $("#updateUser_window").window("open");
+                var data1={
+                    name:data.name,
+                    id:data.id,
+                    password:data.password,
+                    pwd:data.password,
+                    roleName:data.roleName
+                };
+                alert(data1.pwd);
+                $("#updateUser_form").form("load",data1)
+            }else {
+                $.messager.alert("系统消息","必须选择要修改的数据")
+            }
+
+
+        }
+
+
+        function removeMany_user() {
+
+            var data = $("#userlist").datagrid("getSelections");
+            alert(data[0].id);
+            var data1 = [];
+            for (var i=0;i<data.length;i++) {
+                data1[i] = data[i].id;
+
+            }
+            $.get("/user/removeMany/"+data1,function (d) {
+                alert("成功");
+                init_user();
+            })
+        }
+
+        function save_user() {
+
+            // $("#addUser_form").form("submit",{
+            //
+            //     success:function (d) {
+            //         init();
+            //         $("#addUser_window").window("close");
+            //     }
+            //
+            // });
+            var data = new FormData(document.getElementById("addUser_form"));
+
+            // alert(data.password);
+            // alert(data.name)
+            $.ajax({
+                url:"/user/addUser",
+                method:"post",
+                data:data,
+                contentType:false,
+                processData:false,
+                success:function (rs) {
+
+                 $("#addUser_window").window("close");
+                    init_user();
+                }
+
+            });
+        }
+        function Update_user() {
+
+            $("#updateUser_form").form("submit",{
+                success:function (d) {
+                    alert(d);
+
+                    $("#updateUser_window").window("close");
+                    init_user();
+                }
+
+            });
+        }
+        function reset_updateUser() {
+            $("#updateUser_window").window("close");
+        }
+
+        function reset_addUser() {
+            $("#addUser_window").window("close");
+        }
+
+
+        function check_pwd() {
+
+            var pwd_first = $("#pwd_first").val();
+            var pwd_last = $("#pwd_last").val();
+
+            if (pwd_first != pwd_last){
+                $("#pwd_meg").html("<span style='color: red;font-size: 10px;font-family: 华文楷体'>密码不一致，请重新输入</span>")
+            }else {
+                $("#pwd_meg").html("<span style='color: red;font-size: 10px;font-family: 华文楷体'>密码一致</span>")
+
+            }
+        }
+        function check_pwd_() {
+            var pwd_first = $("#pwd_first_").val();
+            var pwd_last = $("#pwd_last_").val();
+            if (pwd_first != pwd_last){
+                $("#pwd_meg_").html("<span style='color: red;font-size: 10px;font-family: 华文楷体'>密码不一致，请重新输入</span>")
+            }else {
+                $("#pwd_meg_").html("<span style='color: red;font-size: 10px;font-family: 华文楷体'>密码一致</span>")
+
+            }
+        }
+
+    </script>

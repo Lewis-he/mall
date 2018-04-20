@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hxh.skymall.dao.RoleDao">
+    <select id="findAllRole" resultType="com.hxh.skymall.entity.Role">
+        SELECT * FROM role
+    </select>
+
+    <insert id="addResource">
+        INSERT INTO r_t(rid, tid) VALUES
+        <foreach collection="tids" item="tid" separator=",">
+            (#{rid},#{tid})
+        </foreach>
+    </insert>
+</mapper>

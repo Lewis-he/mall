@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hxh.restful.dao.CategoryDao">
+
+    <!--<select id="findAllCategory" resultType="com.hxh.skymall.entity.Category">-->
+        <!--select * from mall_category-->
+
+    <!--</select>-->
+    <!--<select id="findAllCategory2" resultType="com.hxh.skymall.entity.Category2">-->
+        <!--select * from mall_category-->
+
+    <!--</select>-->
+
+    <!--<insert id="addCategory" parameterType="com.hxh.skymall.entity.Category2">-->
+        <!--insert into mall_category(id, name, parentId) VALUES (#{id},#{name},#{parentId})-->
+    <!--</insert>-->
+
+</mapper>
